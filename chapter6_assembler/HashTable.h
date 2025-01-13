@@ -1,13 +1,13 @@
 //header file for the hash table (inspired by chapter 6.6 Kernighan&Ritchie 2nd edn)
 
-//structure = entry of hash table (node in ll)
+//entry of hash table (node in linked list)
 struct Entry { 
     char *key; 
     char *value;
-    struct Entry *next; //ptr to next Entry/node in ll 
+    struct Entry *next; //ptr to next node in linked list  
 };
-struct Entry *hashtabdest[8], *hashtabcomp[28], *hashtabjump[8]; //arrays of ptrs to Entry structures (bucket arrays). 
-//Mem is allocated here for the array of ptrs only, not the entries 
+struct Entry *hashtabdest[8], *hashtabcomp[28], *hashtabjump[8]; //bucket arrays 
+//memory is allocated here for the array of ptrs only, not the entries 
 //=> initialised automatically as an array of null ptrs as globally declared (statically allocated memory)
 
 //Hardcoded comp binary mnemonics for C-instructions. 

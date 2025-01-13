@@ -1,7 +1,7 @@
-//Nand2Tetris project 6: build an Assembler to translate Hack assembly file into Hack machine language  
+//nand2tetris project 6: build an Assembler to translate Hack assembly file into Hack machine language  
 //https://www.nand2tetris.org/course (course directory)
 //https://drive.google.com/file/d/1CITliwTJzq19ibBF5EeuNBZ3MJ01dKoI/view (project specification)
-//version 0.1.1: doesn't deal with any pre-determined symbols 
+//version 1.0
 #include "HashTable.c"
 #include <stdio.h>
 #include <ctype.h>
@@ -9,8 +9,8 @@
 #define NAMELENGTH 1000
 
 //routine deals with one command at a time
-char infilename[NAMELENGTH] = "/Users/benstewart/Desktop/code/nand2tetris/projects/6/add/Add.asm";
-char outfilename[NAMELENGTH] = "/Users/benstewart/Desktop/code/nand2tetris/Assembler/Add.hack";  
+char infilename[NAMELENGTH] = "path_to_assembly_input_file";
+char outfilename[NAMELENGTH] = "path_to_binary_output_file";  
 char assemblycommand[12]; //max possible length of a Hack Assembly command is 11 chars + newline \n
 char destfield[4]; //fields of assembly C-command all up to 3 symbols + terminating '\0' char
 char compfield[4];

@@ -1,4 +1,4 @@
-//Linked-list hash table implementation (inspired by chapter 6.6 Kernighan&Ritchie 2nd edn) to lookup Hack assembly commands and their binary translations
+//hash table implementation using linked list collision handling (inspired by chapter 6.6 Kernighan&Ritchie 2nd edn) to lookup Hack assembly commands and their binary translations
 #include "HashTable.h"
 #include <string.h>
 #include <stdlib.h>
@@ -11,16 +11,15 @@ void delete(struct Entry *ptr, char field);
 int fill_tables(char *comp_valid_symbols[], char *jump_valid_symbols[], char *dest_valid_symbols[], char *comp_valid_values[], char *dest_jump_valid_values[]);
 void delete_tables();
 
-//simple hash function from Kernighan&Ritchie 2nd edn. Returns index of bucket containing the input_key 
+//simple and effective djb2 string hash function
 unsigned hash(char *input_key, int nbuckets) {
     unsigned hashval;
-    for (hashval=0; *input_key!='\0'; input_key++) //parse through input_key string
+    for (hashval=0; *input_key!='\0'; input_key++) 
         hashval = *input_key + 31 * hashval;
     return hashval % nbuckets;
 }     
 
 //hash table lookup function 
-//O(n) where n=length of linked list at chosen bucket. As no. of buckets known, should be O(1) lookup if hash func works correctly 
 struct Entry *lookup(char *input_key, char field) {
     struct Entry *ptr; 
     if (field == 'd') {  
@@ -50,7 +49,7 @@ int record(char *input_key, char *input_value, char field) {
     struct Entry *ptr;
     unsigned index; 
     if ((ptr = lookup(input_key, field)) == NULL) { //if input_key not found in table, create its Entry and make it head node of linked list  
-        ptr = (struct Entry *) malloc(sizeof(*ptr)); //allocate heap for a new Entry
+        ptr = (struct Entry *) malloc(sizeof(*ptr)); 
         if (ptr == NULL) {  
             return -1; //if insufficient memory 
         } else {
