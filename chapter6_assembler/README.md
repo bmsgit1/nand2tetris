@@ -5,4 +5,6 @@ v1.0:
 - no handling of pre-defined symbols, user-defined variables or symbolic labels. Need to add extra hash tables to handle these translations.
 - includes full error handling
 - uses hash tables with linked list collision handling as assembly symbol tables
-  
+
+v1.1:
+- handles pre-defined symbols
