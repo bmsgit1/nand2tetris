@@ -1,7 +1,5 @@
 //nand2tetris project 6: build an Assembler to translate Hack assembly file into Hack machine language  
-//https://www.nand2tetris.org/course (course directory)
-//https://drive.google.com/file/d/1CITliwTJzq19ibBF5EeuNBZ3MJ01dKoI/view (project specification)
-//version 1.0
+//version 1.1: deals with pre-defined symbols
 #include "HashTable.c"
 #include <stdio.h>
 #include <ctype.h>
@@ -9,13 +7,13 @@
 #define NAMELENGTH 1000
 
 //routine deals with one command at a time
-char infilename[NAMELENGTH] = "path_to_assembly_input_file";
-char outfilename[NAMELENGTH] = "path_to_binary_output_file";  
-char assemblycommand[12]; //max possible length of a Hack Assembly command is 11 chars + newline \n
+char infilename[NAMELENGTH] = "/Users/benstewart/Desktop/code/nand2tetris/projects/6/add/Add.asm";
+char outfilename[NAMELENGTH] = "/Users/benstewart/Desktop/code/nand2tetris/Assembler/Add.hack";  
+char assemblycommand[12]; //max length of a Hack Assembly command is 11 chars + newline \n
 char destfield[4]; //fields of assembly C-command all up to 3 symbols + terminating '\0' char
 char compfield[4];
 char jumpfield[4];
-char acommand[6]; //assembly A-command up to 5 decimal digits + '\0' 
+char acommand[8]; //assembly A-command up to 7 chars (@SCREEN) + '\0' 
 char binaryinstruction[17]; //binary instruction always 16 bits + '\0'
 
 FILE *input_file_access(char *inputfilename);
@@ -29,6 +27,7 @@ char *parse_jump(char *assemblycommand, char *jumpfield, char *destfield, int co
 char *parse_a(char *assemblycommand, char *acommand, int asscom_length);
 int translate_c(char *compfield, char *destfield, char *jumpfield, char *binaryinstruction); 
 int translate_a(char *acommand, char *binaryinstruction);
+char *predefined_symbol_check(char *acommand);
 int string2int(char *acommand);
 int int2string(int decimal_a, char *binaryinstruction);
 void write_command(char *binaryinstruction, FILE *ofp);
@@ -80,6 +79,7 @@ int skipheader(FILE *ifp) {
 }
 
 //fetch next assembly command, read into assemblycommand array. Ignores comments and whitespace 
+//doesn't deal with complete comment lines
 char *fetchcommand(FILE *ifp, char *asscom) {
     int n=0;
     char c = getc(ifp); 
@@ -186,7 +186,7 @@ char *parse_dest(char *asscom, char *destfield) {
         } else {
             *destfield++ = *asscom++;
             ++n;
-        }
+        } 
     }
     *destfield = '\0';
     destfield -= n;
@@ -300,11 +300,43 @@ char *parse_jump(char *asscom, char *jumpfield, char *destfield, int asscom_leng
 
 /*CODE MODULE*/
 
-/*next three functions translate assembly A-command into its binary instruction*/
+/*next four functions translate assembly A-command into its binary instruction*/
+//if present, translates pre-defined symbol into its decimal string representation 
+char *predefined_symbol_check(char *acom) {
+    int n=0;
+    if (isdigit(*acom) == 0) { //if A-command contains pre-defined symbol
+        struct node *p_node = lookup(acom, 'p');
+        if (p_node != NULL) {
+            while (*(p_node->value) != '\0') {
+                *acom++ = *(p_node->value)++;
+                ++n;
+            }
+            p_node->value -= n;
+            *acom = '\0';
+            acom -= n;
+            //printf update start 
+            printf("Pre-defined symbol translated to: ");
+            while (*acom != '\0') {
+                printf("%c", *acom);
+                ++acom;
+            }
+            printf("\n");
+            acom -= n;
+            //end
+            return acom;
+        } else {
+            printf("ERROR: pre-defined symbol is not in table\n");
+            return NULL; //symbol not in table 
+        }
+    } else {
+        return acom;
+    }
+}
+
 //converts string assembly A-command into its integer form e.g. "321\0" -> 321
 int string2int(char *acom) {
     int n=0;
-    while (*acom >= '0' && *acom <= '9') {
+    while (isdigit(*acom) != 0) {
         n = 10 * n + (*acom - '0'); 
         ++acom;
     }
@@ -362,41 +394,46 @@ int int2string(int decimal_a, char *binaryinst) {
 
 //translates an assembly A-command into its binary instruction
 int translate_a(char *acom, char *binaryinst) { 
-    int decimal_a = string2int(acom); 
-    if (decimal_a == -1) {
-        return -1; //exit if non-decimal character in fetched A-command
+    acom = predefined_symbol_check(acom);
+    if (acom == NULL) {
+        return -1; //exit if pre-defined symbol not in table 
     } else {
-        int conversion_status = int2string(decimal_a, binaryinst);
-        if (conversion_status == -1) {
-            return -1; //exit if non-binary integer found in A-command translation
+        int decimal_a = string2int(acom); 
+        if (decimal_a == -1) {
+            return -1; //exit if non-decimal character in fetched A-command
         } else {
-            return 0; 
+            int conversion_status = int2string(decimal_a, binaryinst);
+            if (conversion_status == -1) {
+                return -1; //exit if non-binary integer found in A-command translation
+            } else {
+                return 0; 
+            }
         }
     }
 }
 
 //translates assembly C-command into its binary instruction
 int translate_c(char *compfield, char *destfield, char *jumpfield, char *binaryinst) {
-    struct Entry *comp_entry = lookup(compfield, 'c');
-    struct Entry *dest_entry = lookup(destfield, 'd');
-    struct Entry *jump_entry = lookup(jumpfield, 'j');
+    struct node *comp_node = lookup(compfield, 'c');
+    struct node *dest_node = lookup(destfield, 'd');
+    struct node *jump_node = lookup(jumpfield, 'j');
     int i;
-    if (comp_entry != NULL && dest_entry != NULL && jump_entry != NULL) { //if all fields in hash tables
+    if (comp_node != NULL && dest_node != NULL && jump_node != NULL) { //if all fields in hash tables
         for (i=0;i<3;i++) { //add three '1' marker bits at start of binary instruction
             *binaryinst++ = '1';
         }
         for (i=3;i<10;i++) {
-            *binaryinst++ = *(comp_entry->value)++; //add 7 comp bits  
+            *binaryinst++ = *(comp_node->value)++; //add 7 comp bits  
         }
-        comp_entry->value -= 7; //point back to start of value 
+        comp_node->value -= 7; //point back to start of value 
         for (i=10;i<13;i++) {
-            *binaryinst++ = *(dest_entry->value)++; //add 3 dest bits 
+            *binaryinst++ = *(dest_node->value)++; //add 3 dest bits 
         } 
-        dest_entry->value -= 3;
+        dest_node->value -= 3;
         for (i=13;i<16;i++) {
-            *binaryinst++ = *(jump_entry->value)++; //add 3 jump bits 
+            *binaryinst++ = *(jump_node->value)++; //add 3 jump bits 
         } 
-        jump_entry->value -= 3;
+        jump_node->value -= 3;
         *binaryinst = '\0'; 
         binaryinst -= i;  
         //printf update start 
@@ -410,14 +447,14 @@ int translate_c(char *compfield, char *destfield, char *jumpfield, char *binaryi
         //end 
         return 0;
     } else {
-        if (comp_entry == NULL) {
-            printf("ERROR: comp field '%c' is not in Hack API\n", *(comp_entry->key));
+        if (comp_node == NULL) {
+            printf("ERROR: comp field '%c' is not in Hack API\n", *(comp_node->key));
         }
-        if (dest_entry == NULL) {
-            printf("ERROR: dest field '%c' is not in Hack API\n", *(dest_entry->key));
+        if (dest_node == NULL) {
+            printf("ERROR: dest field '%c' is not in Hack API\n", *(dest_node->key));
         }
-        if (jump_entry == NULL) {
-            printf("ERROR: jump field '%c' is not in Hack API\n", *(jump_entry->key));
+        if (jump_node == NULL) {
+            printf("ERROR: jump field '%c' is not in Hack API\n", *(jump_node->key));
         } 
         return -1;
     }
@@ -460,7 +497,7 @@ int main() {
                 printf("Closed .hack file\n");
                 return -1; //exit if no commands in .asm file 
             } else {
-                fill_status = fill_tables(comp_valid_symbols, jump_valid_symbols, dest_valid_symbols, comp_valid_values, dest_jump_valid_values); //create hash tables
+                fill_status = fill_tables(comp_valid_symbols, jump_valid_symbols, dest_valid_symbols, predefined_symbols, comp_valid_values, dest_jump_valid_values, predefined_values); //create hash tables
                 if (fill_status == -1) {
                     fclose(ifp);
                     fclose(ofp);

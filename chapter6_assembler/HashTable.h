@@ -1,14 +1,14 @@
-//header file for the hash table (inspired by chapter 6.6 Kernighan&Ritchie 2nd edn)
+//header file for the hash tables (inspired by chapter 6.6 Kernighan&Ritchie 2nd edn)
 
-//entry of hash table (node in linked list)
-struct Entry { 
+//node of hash table (node in linked list)
+struct node { 
     char *key; 
     char *value;
-    struct Entry *next; //ptr to next node in linked list  
+    struct node *next; //ptr to next node in linked list  
 };
-struct Entry *hashtabdest[8], *hashtabcomp[28], *hashtabjump[8]; //bucket arrays 
-//memory is allocated here for the array of ptrs only, not the entries 
-//=> initialised automatically as an array of null ptrs as globally declared (statically allocated memory)
+struct node *hashtabdest[8], *hashtabcomp[28], *hashtabjump[8], *hashtabpredef[23]; //bucket arrays 
+//memory is allocated here for the bucket arrays only, not entries of linked lists
+//=> initialised automatically as an array of null ptrs, as statically stored
 
 //Hardcoded comp binary mnemonics for C-instructions. 
 //Use initialiser lists {} to allocate static memory for each string literal storing a key/value, and the array of ptrs itself  
@@ -22,4 +22,8 @@ char *dest_jump_valid_values[8] = {"001", "010", "011", "100", "101", "110", "11
 
 //Hardcoded jump binary mnemonics for C-instructions
 char *jump_valid_symbols[8] = {"JGT", "JEQ", "JGE", "JLT", "JNE", "JLE", "JMP", "nul"};
+
+//Hardcoded pre-defined register symbols 
+char *predefined_symbols[23] = {"R0", "R1", "R2", "R3", "R4", "R5", "R6", "R7", "R8", "R9", "R10", "R11", "R12", "R13", "R14", "R15", "SP", "LCL", "ARG", "THIS", "THAT", "SCREEN", "KBD"};
+char *predefined_values[23] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "0", "1", "2", "3", "4", "16384", "24576"};
 
