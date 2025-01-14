@@ -4,7 +4,9 @@ Project details found at https://www.nand2tetris.org/_files/ugd/44046b_89a8e2264
 v1.0:
 - no handling of pre-defined symbols, user-defined variables or symbolic labels. Need to add extra hash tables to handle these translations.
 - includes full error handling
-- uses hash tables with linked list collision handling as assembly symbol tables
+- uses hash tables with separate chaining collision handling - O(1) has table lookup + O(N) linear search along an N-element linked list
 
 v1.1:
 - handles pre-defined symbols
+
+
