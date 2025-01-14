@@ -9,7 +9,7 @@ v1.0:
 v1.1:
 - handles pre-defined symbols
 
-comparison of linear search, binary search and hash table lookup as the number of key/value pairs increases (via lookup_speed_test.c):
+comparison of linear search, binary search and hash table lookup as the number of key/value pairs increases (via lookup_speed_test.c):  
 _% gcc lookup_speed_test.c_  
 NUM KEYS: 1  
   linear, 10000 runs: 0.000073000s  
