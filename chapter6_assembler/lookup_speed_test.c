@@ -1,4 +1,24 @@
 //lookup performance test for 28-elements: linear search vs binary search vs hash table 
+/* NUM KEYS: 24
+linear, 10000 runs: 0.000338667s
+binary, 10000 runs: 0.000163750s
+hash , 10000 runs: 0.000110667s
+NUM KEYS: 25
+linear, 10000 runs: 0.000351080s
+binary, 10000 runs: 0.000154840s
+hash , 10000 runs: 0.000111520s
+NUM KEYS: 26
+linear, 10000 runs: 0.000364038s
+binary, 10000 runs: 0.000173769s
+hash , 10000 runs: 0.000113231s
+NUM KEYS: 27
+linear, 10000 runs: 0.000378667s
+binary, 10000 runs: 0.000174185s
+hash , 10000 runs: 0.000112259s
+NUM KEYS: 28
+linear, 10000 runs: 0.000393429s
+binary, 10000 runs: 0.000173143s
+hash , 10000 runs: 0.000116357s */
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
