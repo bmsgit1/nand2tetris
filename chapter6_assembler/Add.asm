@@ -2,13 +2,12 @@
 // and the book "The Elements of Computing Systems"
 // by Nisan and Schocken, MIT Press.
 // File name: projects/6/add/Add.asm
-// first line was @2
 
 // Computes R0 = 2 + 3  (R0 refers to RAM[0])
 
-@R14 
+@2 
 D=A
 @3
 D=D+A
-@0
+@R0
 M=D
