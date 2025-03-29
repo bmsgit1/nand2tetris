@@ -2,8 +2,8 @@
 My implementation of an assembler that translates a Hack assembly file (.asm) into a Hack machine language file (.hack). Works for all test .asm files provided by the nand2tetris course (see .asm files in test folder). 
   
 - see hack_language_specification.png for Hack language syntax
-- potential improvements:
-  there is no error-handling for incorrect Hack assembly syntax 
-  dynamically allocate space for assembly commands to reduce memory wasteage 
-  make the symbol checking routine cleaner
+- potential improvements:  
+  there is no error-handling for incorrect Hack assembly syntax   
+  dynamically allocate space for assembly commands to reduce memory wasteage   
+  make the symbol checking routine cleaner  
 - lookup_speed_test.c provides comparison of linear search, binary search and hash table lookup times for given number of table entries 
