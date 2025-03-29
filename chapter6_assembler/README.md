@@ -1,5 +1,5 @@
 **nand2tetris project 6**   
-My implementation of an assembler that translates a Hack assembly file (.asm) into a Hack machine language file (.hack). Works for all test .asm files provided by the nand2tetris course (see .asm files in test folder). 
+My implementation of an assembler (src/main.c) that translates a Hack assembly file (.asm) into a Hack machine language file (.hack). Works for all test .asm files provided by the nand2tetris course (see .asm files in test folder). 
   
 - see hack_language_specification.png for Hack language syntax
 - see project_6_description.pdf for details of project 
