@@ -4,7 +4,7 @@ My implementation of an assembler (src/main.c) that translates a Hack assembly f
 - see hack_language_specification.png for Hack language syntax
 - see project_6_description.pdf for details of project 
 - potential improvements:  
-  there is no error-handling for incorrect Hack assembly syntax   
-  dynamically allocate space for assembly commands to reduce memory wasteage   
-  make the symbol checking routine cleaner  
+  there is incomplete error-handling for incorrect Hack assembly syntax   
+  could dynamically allocate space for fetched assembly commands to reduce memory wasteage   
+  could make the symbol checking routine cleaner  
 - lookup_speed_test.c provides comparison of linear search, binary search and hash table lookup times for given number of table entries 
